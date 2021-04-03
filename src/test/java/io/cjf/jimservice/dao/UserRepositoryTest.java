@@ -26,4 +26,8 @@ class UserRepositoryTest {
         User save = userRepository.save(user);
     }
 
+    @Test
+    void findByUsername() {
+        User user = userRepository.findByUsername("cjf002");
+    }
 }
