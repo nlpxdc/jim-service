@@ -19,8 +19,8 @@ import java.util.Date;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/user")
-public class UserController {
+@RequestMapping("/userLogin")
+public class UserLoginController {
 
     private BCrypt.Hasher hasher = BCrypt.withDefaults();
 
