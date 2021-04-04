@@ -1,7 +1,9 @@
 package io.cjf.jimservice.controller;
 
+import io.cjf.jimservice.dto.in.UserIdInDTO;
 import io.cjf.jimservice.dto.in.UserProfileInDTO;
 import io.cjf.jimservice.dto.out.UserProfileOutDTO;
+import io.cjf.jimservice.dto.out.UserShowOutDTO;
 import io.cjf.jimservice.exception.ClientException;
 import io.cjf.jimservice.po.User;
 import io.cjf.jimservice.service.UserService;
@@ -38,6 +40,26 @@ public class UserBaseController {
         String[] nulls = BeanUtil.getNulls(userProfileInDTO);
         BeanUtils.copyProperties(userProfileInDTO, user, nulls);
         userService.save(user);
+    }
+
+    @PostMapping("/getBasicInfo")
+    public UserShowOutDTO getBasicInfo(@RequestBody UserIdInDTO userIdInDTO) throws ClientException {
+        String userId = userIdInDTO.getUserId();
+        if (userId == null) {
+            throw new ClientException("invalid params");
+        }
+        User user = userService.load(userId);
+        if (user == null) {
+            throw new ClientException("no userId");
+        }
+        UserShowOutDTO userShowOutDTO = new UserShowOutDTO();
+        BeanUtils.copyProperties(user, userShowOutDTO);
+        return userShowOutDTO;
+    }
+
+    @PostMapping("/batchGetBasicInfo")
+    public Object batchGetBasicInfo() {
+        return null;
     }
 
 }
