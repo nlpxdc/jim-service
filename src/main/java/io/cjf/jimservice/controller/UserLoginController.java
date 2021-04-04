@@ -4,6 +4,7 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
+import io.cjf.jimservice.constant.GlobalConstant;
 import io.cjf.jimservice.dto.in.UsernameInDTO;
 import io.cjf.jimservice.dto.out.UserLoginOutDTO;
 import io.cjf.jimservice.exception.ClientException;
@@ -30,8 +31,6 @@ public class UserLoginController {
 
     @Autowired
     private UserService userService;
-
-    private Algorithm algorithmHS = Algorithm.HMAC256("123456");
 
     @PostMapping("/registerByUsername")
     public UserLoginOutDTO registerByUsername(@RequestBody UsernameInDTO usernameInDTO) throws ClientException {
@@ -90,7 +89,7 @@ public class UserLoginController {
                 .withClaim("type", "Access")
                 .withClaim("userId", user.getUserId())
                 .withExpiresAt(new Date(accessExpireTime))
-                .sign(algorithmHS);
+                .sign(GlobalConstant.algorithmHS);
 
         UserLoginOutDTO userLoginOutDTO = new UserLoginOutDTO();
         userLoginOutDTO.setUserId(user.getUserId());
