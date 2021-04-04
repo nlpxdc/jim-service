@@ -1,6 +1,7 @@
 package io.cjf.jimservice.controller;
 
 import io.cjf.jimservice.dto.in.UserIdInDTO;
+import io.cjf.jimservice.dto.in.UserIdsInDTO;
 import io.cjf.jimservice.dto.in.UserProfileInDTO;
 import io.cjf.jimservice.dto.out.UserProfileOutDTO;
 import io.cjf.jimservice.dto.out.UserShowOutDTO;
@@ -11,6 +12,9 @@ import io.cjf.jimservice.util.BeanUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/userBase")
@@ -58,8 +62,30 @@ public class UserBaseController {
     }
 
     @PostMapping("/batchGetBasicInfo")
-    public Object batchGetBasicInfo() {
-        return null;
+    public List<UserShowOutDTO> batchGetBasicInfo(@RequestBody UserIdsInDTO userIdsInDTO) throws ClientException {
+        List<String> userIds = userIdsInDTO.getUserIds();
+        if (userIds == null || userIds.size() == 0 || userIds.size() > 1000) {
+            throw new ClientException("invalid params");
+        }
+        for (String userId : userIds) {
+            if (userId == null) {
+                throw new ClientException("invalid params");
+            }
+        }
+        List<String> dUserIds = userIds.stream().distinct().collect(Collectors.toList());
+        if (dUserIds.size() < userIds.size()) {
+            throw new ClientException("contains same userIds");
+        }
+        List<User> users = userService.batchLoad(userIds);
+        List<UserShowOutDTO> userShowOutDTOS = users.stream().map(user -> {
+            UserShowOutDTO userShowOutDTO = null;
+            if (user != null) {
+                userShowOutDTO = new UserShowOutDTO();
+                BeanUtils.copyProperties(user, userShowOutDTO);
+            }
+            return userShowOutDTO;
+        }).collect(Collectors.toList());
+        return userShowOutDTOS;
     }
 
 }

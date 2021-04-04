@@ -3,6 +3,8 @@ package io.cjf.jimservice.advisor;
 import io.cjf.jimservice.constant.ErrConstant;
 import io.cjf.jimservice.dto.out.ExOutDTO;
 import io.cjf.jimservice.exception.ClientException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -10,6 +12,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class ExceptionAdvisor {
+
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @ExceptionHandler
     public ResponseEntity<ExOutDTO> handleClientException(ClientException ex) {
@@ -21,6 +25,7 @@ public class ExceptionAdvisor {
 
     @ExceptionHandler
     public ExOutDTO handleRuntimeException(RuntimeException ex) {
+        logger.error("RuntimeException", ex);
         ExOutDTO exOutDTO = new ExOutDTO();
         exOutDTO.setCode(ErrConstant.SERVER_ERR_CODE);
         exOutDTO.setMessage(ErrConstant.SERVER_ERR_MSG);
