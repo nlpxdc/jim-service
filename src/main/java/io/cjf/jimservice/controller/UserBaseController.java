@@ -6,9 +6,12 @@ import io.cjf.jimservice.dto.out.UserProfileOutDTO;
 import io.cjf.jimservice.exception.ClientException;
 import io.cjf.jimservice.po.User;
 import io.cjf.jimservice.service.UserService;
+import io.cjf.jimservice.util.BeanUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Set;
 
 @RestController
 @RequestMapping("/userBase")
@@ -30,14 +33,16 @@ public class UserBaseController {
 
     @PostMapping("/updateProfile")
     public void updateProfile(@RequestBody UserProfileInDTO userProfileInDTO,
-                              @RequestAttribute String currentUserId) throws ClientException {
+                              @RequestAttribute String currentUserId) throws ClientException, IllegalAccessException {
         User user = userService.load(currentUserId);
         if (user == null) {
             throw new ClientException("no user");
         }
-        Object o = JSON.toJSON(userProfileInDTO);
-        BeanUtils.copyProperties(userProfileInDTO, user);
+        String[] nulls = BeanUtil.getNulls(userProfileInDTO);
+        BeanUtils.copyProperties(userProfileInDTO, user, nulls);
         userService.save(user);
     }
+
+
 
 }
