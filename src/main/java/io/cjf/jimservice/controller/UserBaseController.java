@@ -1,6 +1,5 @@
 package io.cjf.jimservice.controller;
 
-import com.alibaba.fastjson.JSON;
 import io.cjf.jimservice.dto.in.UserProfileInDTO;
 import io.cjf.jimservice.dto.out.UserProfileOutDTO;
 import io.cjf.jimservice.exception.ClientException;
@@ -10,8 +9,6 @@ import io.cjf.jimservice.util.BeanUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Set;
 
 @RestController
 @RequestMapping("/userBase")
@@ -42,7 +39,5 @@ public class UserBaseController {
         BeanUtils.copyProperties(userProfileInDTO, user, nulls);
         userService.save(user);
     }
-
-
 
 }
