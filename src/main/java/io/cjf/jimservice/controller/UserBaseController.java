@@ -91,7 +91,17 @@ public class UserBaseController {
 
     @PostMapping("/getByUsername")
     public UserShowOutDTO getByUsername(@RequestBody UsernameInDTO usernameInDTO) {
-        return null;
+        String username = usernameInDTO.getUsername();
+        if (username == null || username.isEmpty() || username.length() < 6) {
+            return null;
+        }
+        User user = userService.getByUsername(username);
+        UserShowOutDTO userShowOutDTO = null;
+        if (user != null) {
+            userShowOutDTO = new UserShowOutDTO();
+            BeanUtils.copyProperties(user, userShowOutDTO);
+        }
+        return userShowOutDTO;
     }
 
 }
