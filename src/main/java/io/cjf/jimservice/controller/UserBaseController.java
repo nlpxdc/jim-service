@@ -46,8 +46,8 @@ public class UserBaseController {
         userService.save(user);
     }
 
-    @PostMapping("/getBasicInfo")
-    public UserShowOutDTO getBasicInfo(@RequestBody UserIdInDTO userIdInDTO) throws ClientException {
+    @PostMapping("/load")
+    public UserShowOutDTO load(@RequestBody UserIdInDTO userIdInDTO) throws ClientException {
         String userId = userIdInDTO.getUserId();
         if (userId == null) {
             throw new ClientException("invalid params");
@@ -61,8 +61,8 @@ public class UserBaseController {
         return userShowOutDTO;
     }
 
-    @PostMapping("/batchGetBasicInfo")
-    public List<UserShowOutDTO> batchGetBasicInfo(@RequestBody UserIdsInDTO userIdsInDTO) throws ClientException {
+    @PostMapping("/batchLoad")
+    public List<UserShowOutDTO> batchLoad(@RequestBody UserIdsInDTO userIdsInDTO) throws ClientException {
         List<String> userIds = userIdsInDTO.getUserIds();
         if (userIds == null || userIds.size() == 0 || userIds.size() > 1000) {
             throw new ClientException("invalid params");
