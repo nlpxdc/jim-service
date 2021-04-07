@@ -3,6 +3,7 @@ package io.cjf.jimservice.controller;
 import io.cjf.jimservice.dto.in.UserIdInDTO;
 import io.cjf.jimservice.dto.in.UserIdsInDTO;
 import io.cjf.jimservice.dto.in.UserProfileInDTO;
+import io.cjf.jimservice.dto.in.UsernameInDTO;
 import io.cjf.jimservice.dto.out.UserProfileOutDTO;
 import io.cjf.jimservice.dto.out.UserShowOutDTO;
 import io.cjf.jimservice.exception.ClientException;
@@ -86,6 +87,11 @@ public class UserBaseController {
             return userShowOutDTO;
         }).collect(Collectors.toList());
         return userShowOutDTOS;
+    }
+
+    @PostMapping("/getByUsername")
+    public UserShowOutDTO getByUsername(@RequestBody UsernameInDTO usernameInDTO) {
+        return null;
     }
 
 }
