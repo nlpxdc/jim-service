@@ -48,7 +48,7 @@ public class UserLoginController {
 
         user = new User();
         String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-        user.setUserId(String.format("U%s", uuid));
+        user.setUserId(String.format("u%s", uuid));
         user.setUsername(username);
         String encPassword = hasher.hashToString(4, password.toCharArray());
         user.setLoginPassword(encPassword);
