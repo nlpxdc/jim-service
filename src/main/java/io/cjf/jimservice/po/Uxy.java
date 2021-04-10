@@ -1,16 +1,10 @@
 package io.cjf.jimservice.po;
 
-import org.springframework.data.mongodb.core.index.CompoundIndex;
-import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.HashIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
 @Document
-@CompoundIndexes({
-        @CompoundIndex(def = "{'uxId':1, 'beFriendTime': -1}", name = "uxId_beFriendTime_idx"),
-        @CompoundIndex(def = "{'uyId':1, 'beFriendTime': -1}", name = "uyId_beFriendTime_idx")
-})
 public class Uxy {
     @MongoId
     private String uxyId;
@@ -19,6 +13,8 @@ public class Uxy {
     @HashIndexed
     private String uyId;
 
+    private Boolean applyFriend;
+    private Long applyFriendTime;
     private Boolean beFriend;
     private Long beFriendTime;
     private String remarkName;
@@ -46,6 +42,22 @@ public class Uxy {
 
     public void setUyId(String uyId) {
         this.uyId = uyId;
+    }
+
+    public Boolean getApplyFriend() {
+        return applyFriend;
+    }
+
+    public void setApplyFriend(Boolean applyFriend) {
+        this.applyFriend = applyFriend;
+    }
+
+    public Long getApplyFriendTime() {
+        return applyFriendTime;
+    }
+
+    public void setApplyFriendTime(Long applyFriendTime) {
+        this.applyFriendTime = applyFriendTime;
     }
 
     public Boolean getBeFriend() {
