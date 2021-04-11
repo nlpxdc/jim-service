@@ -8,6 +8,12 @@ import io.cjf.jimservice.service.UxyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 @RestController
 @RequestMapping("/uxy")
 public class UxyController {
@@ -58,6 +64,15 @@ public class UxyController {
         long now = System.currentTimeMillis();
         uxy.setApplyFriendTime(now);
         Uxy save = uxyService.save(uxy);
+    }
+
+    @PostMapping("/batchGetApplyFriend")
+    public List<Uxy> batchGetApplyFriend(@RequestAttribute String currentUserId) {
+        List<Uxy> xs = uxyService.batchGetByUxId(currentUserId);
+        List<Uxy> ys = uxyService.batchGetByUyId(currentUserId);
+        List<Uxy> xys = Stream.of(xs, ys).flatMap(Collection::stream).collect(Collectors.toList());
+        List<Uxy> applyFriends = xys.stream().filter(uxy -> uxy.getApplyFriend() != null && uxy.getApplyFriend()).collect(Collectors.toList());
+        return applyFriends;
     }
 
 }
