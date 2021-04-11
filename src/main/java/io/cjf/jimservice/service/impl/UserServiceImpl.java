@@ -1,7 +1,5 @@
 package io.cjf.jimservice.service.impl;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import io.cjf.jimservice.dao.UserRepository;
 import io.cjf.jimservice.po.User;
 import io.cjf.jimservice.service.UserService;
@@ -10,7 +8,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -31,7 +32,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> batchLoad(List<String> userIds) {
         Iterable<User> dbUsers = userRepository.findAllById(userIds);
-        ImmutableMap<String, User> map = Maps.uniqueIndex(dbUsers, User::getUserId);
+        Map<String, User> map = StreamSupport.stream(dbUsers.spliterator(), false).collect(Collectors.toMap(User::getUserId, user -> user));
         List<User> users = new LinkedList<>();
         for (String userId : userIds) {
             User user = map.get(userId);
