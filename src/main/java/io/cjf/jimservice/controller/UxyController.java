@@ -24,7 +24,7 @@ public class UxyController {
     public Uxy loadByUy(@RequestBody UyIdInDTO uyIdInDTO,
                         @RequestAttribute String currentUserId) throws ClientException {
         String uyId = uyIdInDTO.getUyId();
-        if (uyId == null || uyId.isEmpty()) {
+        if (uyId == null || uyId.isEmpty() || uyId.equals(currentUserId)) {
             throw new ClientException("invalid params");
         }
         String uxyId = String.format("%sV%s", currentUserId, uyId);
@@ -36,7 +36,7 @@ public class UxyController {
     public Uxy loadByUx(@RequestBody UxIdInDTO uxIdInDTO,
                         @RequestAttribute String currentUserId) throws ClientException {
         String uxId = uxIdInDTO.getUxId();
-        if (uxId == null || uxId.isEmpty()) {
+        if (uxId == null || uxId.isEmpty() || uxId.equals(currentUserId)) {
             throw new ClientException("invalid params");
         }
         String uxyId = String.format("%sV%s", uxId, currentUserId);
