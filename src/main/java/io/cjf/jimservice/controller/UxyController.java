@@ -48,7 +48,7 @@ public class UxyController {
     public void applyFriend(@RequestBody UyIdInDTO uyIdInDTO,
                             @RequestAttribute String currentUserId) throws ClientException {
         String uyId = uyIdInDTO.getUyId();
-        if (uyId == null || uyId.isEmpty()) {
+        if (uyId == null || uyId.isEmpty() || uyId.equals(currentUserId)) {
             throw new ClientException("invalid params");
         }
         String uxyId = String.format("%sV%s", currentUserId, uyId);
