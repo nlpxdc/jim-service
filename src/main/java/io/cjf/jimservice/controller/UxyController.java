@@ -70,7 +70,7 @@ public class UxyController {
         List<Uxy> xs = uxyService.batchGetByUxId(currentUserId);
         List<Uxy> ys = uxyService.batchGetByUyId(currentUserId);
         List<Uxy> xys = Stream.of(xs, ys).flatMap(Collection::stream).collect(Collectors.toList());
-        List<Uxy> applyFriends = xys.stream().filter(uxy -> uxy.getApplyFriend() != null && uxy.getApplyFriend()).collect(Collectors.toList());
+        List<Uxy> applyFriends = xys.stream().filter(Uxy::getApplyFriend).collect(Collectors.toList());
         return applyFriends;
     }
 
