@@ -1,22 +1,16 @@
 package io.cjf.jimservice.dto.out;
 
-public class UserProfileOutDTO {
+import io.cjf.jimservice.dto.UserIdDTO;
+import io.cjf.jimservice.dto.in.UserIdsInDTO;
 
-    private String userId;
+public class UserProfileOutDTO extends UserIdDTO {
+
     private String username;
     private String nickname;
     private String avatar;
     private Long birthday;
     private Integer gender;
     private String area;
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
 
     public String getUsername() {
         return username;

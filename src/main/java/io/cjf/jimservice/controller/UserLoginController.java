@@ -3,8 +3,8 @@ package io.cjf.jimservice.controller;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
-import com.auth0.jwt.algorithms.Algorithm;
 import io.cjf.jimservice.constant.GlobalConstant;
+import io.cjf.jimservice.dto.UserIdDTO;
 import io.cjf.jimservice.dto.in.UsernameInDTO;
 import io.cjf.jimservice.dto.out.UserLoginOutDTO;
 import io.cjf.jimservice.exception.ClientException;
@@ -33,7 +33,7 @@ public class UserLoginController {
     private UserService userService;
 
     @PostMapping("/registerByUsername")
-    public UserLoginOutDTO registerByUsername(@RequestBody UsernameInDTO usernameInDTO) throws ClientException {
+    public UserIdDTO registerByUsername(@RequestBody UsernameInDTO usernameInDTO) throws ClientException {
         String username = usernameInDTO.getUsername();
         String password = usernameInDTO.getPassword();
         if (username == null || username.isEmpty() || username.length() < 6 || !Character.isLetter(username.toCharArray()[0]) ||
@@ -54,9 +54,10 @@ public class UserLoginController {
         user.setLoginPassword(encPassword);
         User save = userService.save(user);
 
-        UserLoginOutDTO userLoginOutDTO = issue(save);
+        UserIdDTO userIdDTO = new UserIdDTO();
+        userIdDTO.setUserId(save.getUserId());
 
-        return userLoginOutDTO;
+        return userIdDTO;
     }
 
     @PostMapping("/loginByUsername")

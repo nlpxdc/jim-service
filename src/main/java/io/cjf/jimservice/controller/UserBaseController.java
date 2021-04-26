@@ -1,6 +1,6 @@
 package io.cjf.jimservice.controller;
 
-import io.cjf.jimservice.dto.in.UserIdInDTO;
+import io.cjf.jimservice.dto.UserIdDTO;
 import io.cjf.jimservice.dto.in.UserIdsInDTO;
 import io.cjf.jimservice.dto.in.UserProfileInDTO;
 import io.cjf.jimservice.dto.in.UsernameInDTO;
@@ -24,8 +24,8 @@ public class UserBaseController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/getProfile")
-    public UserProfileOutDTO getProfile(@RequestAttribute String currentUserId) throws ClientException {
+    @PostMapping("/loadProfile")
+    public UserProfileOutDTO loadProfile(@RequestAttribute String currentUserId) throws ClientException {
         User user = userService.load(currentUserId);
         if (user == null) {
             throw new ClientException("no user");
@@ -48,8 +48,8 @@ public class UserBaseController {
     }
 
     @PostMapping("/load")
-    public UserShowOutDTO load(@RequestBody UserIdInDTO userIdInDTO) throws ClientException {
-        String userId = userIdInDTO.getUserId();
+    public UserShowOutDTO load(@RequestBody UserIdDTO userIdDTO) throws ClientException {
+        String userId = userIdDTO.getUserId();
         if (userId == null) {
             throw new ClientException("invalid params");
         }

@@ -1,6 +1,6 @@
-package io.cjf.jimservice.dto.in;
+package io.cjf.jimservice.dto;
 
-public class UserIdInDTO {
+public class UserIdDTO {
     private String userId;
 
     public String getUserId() {
