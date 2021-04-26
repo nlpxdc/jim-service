@@ -36,15 +36,15 @@ public class UserBaseController {
     }
 
     @PostMapping("/updateProfile")
-    public void updateProfile(@RequestBody UserProfileInDTO userProfileInDTO,
+    public UserProfileOutDTO updateProfile(@RequestBody UserProfileInDTO userProfileInDTO,
                               @RequestAttribute String currentUserId) throws ClientException, IllegalAccessException {
-        User user = userService.load(currentUserId);
-        if (user == null) {
-            throw new ClientException("no user");
-        }
-        String[] nulls = BeanUtil.getNulls(userProfileInDTO);
-        BeanUtils.copyProperties(userProfileInDTO, user, nulls);
-        userService.save(user);
+        User user = new User();
+        user.setUserId(currentUserId);
+        BeanUtils.copyProperties(userProfileInDTO, user);
+        User save = userService.update(user);
+        UserProfileOutDTO userProfileOutDTO = new UserProfileOutDTO();
+        BeanUtils.copyProperties(save, userProfileOutDTO);
+        return userProfileOutDTO;
     }
 
     @PostMapping("/load")

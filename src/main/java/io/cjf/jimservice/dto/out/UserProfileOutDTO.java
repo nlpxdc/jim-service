@@ -1,7 +1,6 @@
 package io.cjf.jimservice.dto.out;
 
 import io.cjf.jimservice.dto.UserIdDTO;
-import io.cjf.jimservice.dto.in.UserIdsInDTO;
 
 public class UserProfileOutDTO extends UserIdDTO {
 

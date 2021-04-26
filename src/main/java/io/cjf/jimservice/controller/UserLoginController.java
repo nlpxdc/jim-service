@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/userLogin")
@@ -47,12 +46,10 @@ public class UserLoginController {
         }
 
         user = new User();
-        String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-        user.setUserId(String.format("u%s", uuid));
         user.setUsername(username);
         String encPassword = hasher.hashToString(4, password.toCharArray());
         user.setLoginPassword(encPassword);
-        User save = userService.save(user);
+        User save = userService.create(user);
 
         UserIdDTO userIdDTO = new UserIdDTO();
         userIdDTO.setUserId(save.getUserId());
