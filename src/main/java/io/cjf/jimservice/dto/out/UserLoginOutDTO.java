@@ -1,11 +1,18 @@
 package io.cjf.jimservice.dto.out;
 
-import io.cjf.jimservice.dto.UserIdDTO;
-
-public class UserLoginOutDTO extends UserIdDTO {
+public class UserLoginOutDTO {
+    private String userId;
     private Long tokenIssueTime;
     private Long accessExpireTime;
     private String accessToken;
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public Long getTokenIssueTime() {
         return tokenIssueTime;

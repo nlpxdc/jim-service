@@ -6,8 +6,12 @@ import io.cjf.jimservice.service.UxyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class UxyServiceImpl implements UxyService {
@@ -32,13 +36,25 @@ public class UxyServiceImpl implements UxyService {
     }
 
     @Override
-    public List<Uxy> batchGetByUxId(String uxId) {
+    public List<Uxy> batchLoad(List<String> uxyIds) {
+        LinkedList<Uxy> list = new LinkedList<>();
+        Iterable<Uxy> uxys = uxyRepository.findAllById(uxyIds);
+        Map<String, Uxy> map = StreamSupport.stream(uxys.spliterator(), false).collect(Collectors.toMap(Uxy::getUxyId, uxy -> uxy));
+        for (String uxyId : uxyIds) {
+            Uxy uxy = map.get(uxyId);
+            boolean add = list.add(uxy);
+        }
+        return list;
+    }
+
+    @Override
+    public List<Uxy> batchGetByUx(String uxId) {
         List<Uxy> uxys = uxyRepository.findAllByUxId(uxId);
         return uxys;
     }
 
     @Override
-    public List<Uxy> batchGetByUyId(String uyId) {
+    public List<Uxy> batchGetByUy(String uyId) {
         List<Uxy> uxys = uxyRepository.findAllByUyId(uyId);
         return uxys;
     }

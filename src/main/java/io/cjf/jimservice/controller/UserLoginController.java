@@ -4,8 +4,6 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
 import io.cjf.jimservice.constant.GlobalConstant;
-import io.cjf.jimservice.dto.UserIdDTO;
-import io.cjf.jimservice.dto.in.UsernameInDTO;
 import io.cjf.jimservice.dto.out.UserLoginOutDTO;
 import io.cjf.jimservice.exception.ClientException;
 import io.cjf.jimservice.po.User;
@@ -32,45 +30,45 @@ public class UserLoginController {
     private UserService userService;
 
     @PostMapping("/registerByUsername")
-    public UserIdDTO registerByUsername(@RequestBody UsernameInDTO usernameInDTO) throws ClientException {
-        String username = usernameInDTO.getUsername();
-        String password = usernameInDTO.getPassword();
+    public User registerByUsername(@RequestBody User user) throws ClientException {
+        String username = user.getUsername();
+        String loginPassword = user.getLoginPassword();
         if (username == null || username.isEmpty() || username.length() < 6 || !Character.isLetter(username.toCharArray()[0]) ||
-                password == null || password.isEmpty() || password.length() < 6) {
+                loginPassword == null || loginPassword.isEmpty() || loginPassword.length() < 6) {
             throw new ClientException("invalid params");
         }
 
-        User user = userService.getByUsername(username);
-        if (user != null) {
+        User dbUser = userService.getByUsername(username);
+        if (dbUser != null) {
             throw new ClientException("username already used");
         }
 
         user = new User();
         user.setUsername(username);
-        String encPassword = hasher.hashToString(4, password.toCharArray());
+        String encPassword = hasher.hashToString(4, loginPassword.toCharArray());
         user.setLoginPassword(encPassword);
         User save = userService.create(user);
 
-        UserIdDTO userIdDTO = new UserIdDTO();
-        userIdDTO.setUserId(save.getUserId());
+        User retUser = new User();
+        retUser.setUserId(save.getUserId());
 
-        return userIdDTO;
+        return retUser;
     }
 
     @PostMapping("/loginByUsername")
-    public UserLoginOutDTO loginByUsername(@RequestBody UsernameInDTO usernameInDTO) throws ClientException {
-        String username = usernameInDTO.getUsername();
-        String password = usernameInDTO.getPassword();
+    public UserLoginOutDTO loginByUsername(@RequestBody User user) throws ClientException {
+        String username = user.getUsername();
+        String loginPassword = user.getLoginPassword();
         if (username == null || username.isEmpty() || username.length() < 6 || !Character.isLetter(username.toCharArray()[0]) ||
-                password == null || password.isEmpty() || password.length() < 6) {
+                loginPassword == null || loginPassword.isEmpty() || loginPassword.length() < 6) {
             throw new ClientException("invalid params");
         }
-        User user = userService.getByUsername(username);
-        if (user == null) {
+        User dbUser = userService.getByUsername(username);
+        if (dbUser == null) {
             throw new ClientException("invalid username or password");
         }
-        String loginPassword = user.getLoginPassword();
-        BCrypt.Result result = verifyer.verify(password.toCharArray(), loginPassword);
+        String dbLoginPassword = user.getLoginPassword();
+        BCrypt.Result result = verifyer.verify(loginPassword.toCharArray(), dbLoginPassword);
         if (!result.verified) {
             throw new ClientException("invalid username or password");
         }

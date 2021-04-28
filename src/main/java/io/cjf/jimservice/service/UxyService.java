@@ -10,8 +10,10 @@ public interface UxyService {
 
     Uxy save(Uxy uxy);
 
-    List<Uxy> batchGetByUxId(String uxId);
+    List<Uxy> batchLoad(List<String> uxyIds);
 
-    List<Uxy> batchGetByUyId(String uyId);
+    List<Uxy> batchGetByUx(String uxId);
+
+    List<Uxy> batchGetByUy(String uyId);
 
 }

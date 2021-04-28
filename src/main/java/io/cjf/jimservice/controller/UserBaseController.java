@@ -1,15 +1,12 @@
 package io.cjf.jimservice.controller;
 
-import io.cjf.jimservice.dto.UserIdDTO;
 import io.cjf.jimservice.dto.in.UserIdsInDTO;
 import io.cjf.jimservice.dto.in.UserProfileInDTO;
-import io.cjf.jimservice.dto.in.UsernameInDTO;
 import io.cjf.jimservice.dto.out.UserProfileOutDTO;
 import io.cjf.jimservice.dto.out.UserShowOutDTO;
 import io.cjf.jimservice.exception.ClientException;
 import io.cjf.jimservice.po.User;
 import io.cjf.jimservice.service.UserService;
-import io.cjf.jimservice.util.BeanUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -48,17 +45,17 @@ public class UserBaseController {
     }
 
     @PostMapping("/load")
-    public UserShowOutDTO load(@RequestBody UserIdDTO userIdDTO) throws ClientException {
-        String userId = userIdDTO.getUserId();
+    public UserShowOutDTO load(@RequestBody User user) throws ClientException {
+        String userId = user.getUserId();
         if (userId == null) {
             throw new ClientException("invalid params");
         }
-        User user = userService.load(userId);
-        if (user == null) {
-            throw new ClientException("no userId");
+        User dbUser = userService.load(userId);
+        if (dbUser == null) {
+            throw new ClientException("no db user");
         }
         UserShowOutDTO userShowOutDTO = new UserShowOutDTO();
-        BeanUtils.copyProperties(user, userShowOutDTO);
+        BeanUtils.copyProperties(dbUser, userShowOutDTO);
         return userShowOutDTO;
     }
 
@@ -90,16 +87,16 @@ public class UserBaseController {
     }
 
     @PostMapping("/getByUsername")
-    public UserShowOutDTO getByUsername(@RequestBody UsernameInDTO usernameInDTO) {
-        String username = usernameInDTO.getUsername();
+    public UserShowOutDTO getByUsername(@RequestBody User user) {
+        String username = user.getUsername();
         if (username == null || username.isEmpty() || username.length() < 6) {
             return null;
         }
-        User user = userService.getByUsername(username);
+        User dbUser = userService.getByUsername(username);
         UserShowOutDTO userShowOutDTO = null;
-        if (user != null) {
+        if (dbUser != null) {
             userShowOutDTO = new UserShowOutDTO();
-            BeanUtils.copyProperties(user, userShowOutDTO);
+            BeanUtils.copyProperties(dbUser, userShowOutDTO);
         }
         return userShowOutDTO;
     }
