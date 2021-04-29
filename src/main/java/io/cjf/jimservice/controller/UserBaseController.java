@@ -1,6 +1,5 @@
 package io.cjf.jimservice.controller;
 
-import io.cjf.jimservice.dto.in.UserIdsInDTO;
 import io.cjf.jimservice.dto.in.UserProfileInDTO;
 import io.cjf.jimservice.dto.out.UserProfileOutDTO;
 import io.cjf.jimservice.dto.out.UserShowOutDTO;
@@ -60,9 +59,9 @@ public class UserBaseController {
     }
 
     @PostMapping("/batchLoad")
-    public List<UserShowOutDTO> batchLoad(@RequestBody UserIdsInDTO userIdsInDTO) throws ClientException {
-        List<String> userIds = userIdsInDTO.getUserIds();
-        if (userIds == null || userIds.size() == 0 || userIds.size() > 1000) {
+    public List<UserShowOutDTO> batchLoad(@RequestBody List<User> ins) throws ClientException {
+        List<String> userIds = ins.stream().map(User::getUserId).collect(Collectors.toList());
+        if (userIds.isEmpty() || userIds.size() > 1000) {
             throw new ClientException("invalid params");
         }
         for (String userId : userIds) {

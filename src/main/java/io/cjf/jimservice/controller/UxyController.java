@@ -22,10 +22,10 @@ public class UxyController {
     private UxyService uxyService;
 
     @PostMapping("/load")
-    public Uxy load(@RequestBody Uxy uxy,
+    public Uxy load(@RequestBody Uxy in,
                     @RequestAttribute String currentUserId) throws ClientException {
-        String uxId = uxy.getUxId();
-        String uyId = uxy.getUyId();
+        String uxId = in.getUxId();
+        String uyId = in.getUyId();
         if (uxId == null || uxId.isEmpty() || uyId == null || uyId.isEmpty()) {
             throw new ClientException("invalid params");
         }
@@ -33,25 +33,28 @@ public class UxyController {
             throw new ClientException("forbidden");
         }
         String uxyId = String.format("%sV%s", uxId, uyId);
-        Uxy dbUxy = uxyService.load(uxyId);
-        if (dbUxy == null) {
+        Uxy uxy = uxyService.load(uxyId);
+        if (uxy == null) {
             throw new ClientException("non db uxy");
         }
-        return dbUxy;
+        return uxy;
     }
 
     @PostMapping("/batchLoad")
-    public List<Uxy> batchLoad(@RequestBody UxyIdsInDTO uxyIdsInDTO,
+    public List<Uxy> batchLoad(@RequestBody List<Uxy> ins,
                                @RequestAttribute String currentUserId) throws ClientException {
-        List<String> uxyIds = uxyIdsInDTO.getUxyIds();
-        if (uxyIds == null || uxyIds.isEmpty()) {
+        if (ins == null || ins.isEmpty()) {
             throw new ClientException("invalid params");
         }
-        for (String uxyId : uxyIds) {
-            if (!uxyId.startsWith(currentUserId) && !uxyId.endsWith(currentUserId)) {
+        for (Uxy in : ins) {
+            if (!in.getUxId().equals(currentUserId) && !in.getUyId().equals(currentUserId)) {
                 throw new ClientException("forbidden");
             }
         }
+        List<String> uxyIds = ins.stream().map(uxy -> {
+            String uxyId = String.format("%sV%s", uxy.getUxId(), uxy.getUyId());
+            return uxyId;
+        }).collect(Collectors.toList());
         List<Uxy> uxys = uxyService.batchLoad(uxyIds);
         return uxys;
     }

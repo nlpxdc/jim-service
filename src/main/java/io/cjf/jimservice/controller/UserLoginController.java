@@ -4,6 +4,7 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
 import io.cjf.jimservice.constant.GlobalConstant;
+import io.cjf.jimservice.dto.in.UserRegisterInDTO;
 import io.cjf.jimservice.dto.out.UserLoginOutDTO;
 import io.cjf.jimservice.exception.ClientException;
 import io.cjf.jimservice.po.User;
@@ -30,16 +31,16 @@ public class UserLoginController {
     private UserService userService;
 
     @PostMapping("/registerByUsername")
-    public User registerByUsername(@RequestBody User user) throws ClientException {
-        String username = user.getUsername();
-        String loginPassword = user.getLoginPassword();
+    public UserLoginOutDTO registerByUsername(@RequestBody UserRegisterInDTO userRegisterInDTO) throws ClientException {
+        String username = userRegisterInDTO.getUsername();
+        String loginPassword = userRegisterInDTO.getLoginPassword();
         if (username == null || username.isEmpty() || username.length() < 6 || !Character.isLetter(username.toCharArray()[0]) ||
                 loginPassword == null || loginPassword.isEmpty() || loginPassword.length() < 6) {
             throw new ClientException("invalid params");
         }
 
-        User dbUser = userService.getByUsername(username);
-        if (dbUser != null) {
+        User user = userService.getByUsername(username);
+        if (user != null) {
             throw new ClientException("username already used");
         }
 
@@ -49,10 +50,9 @@ public class UserLoginController {
         user.setLoginPassword(encPassword);
         User save = userService.create(user);
 
-        User retUser = new User();
-        retUser.setUserId(save.getUserId());
+        UserLoginOutDTO userLoginOutDTO = issue(save);
 
-        return retUser;
+        return userLoginOutDTO;
     }
 
     @PostMapping("/loginByUsername")
