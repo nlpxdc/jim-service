@@ -1,5 +1,6 @@
 package io.cjf.jimservice.controller;
 
+import io.cjf.jimservice.dto.in.UxySaveInDTO;
 import io.cjf.jimservice.exception.ClientException;
 import io.cjf.jimservice.po.Uxy;
 import io.cjf.jimservice.service.UxyService;
@@ -59,8 +60,8 @@ public class UxyController {
     }
 
     @PostMapping("/save")
-    public Uxy save(@RequestBody Uxy in,
-                      @RequestAttribute String currentUserId) throws ClientException, IllegalAccessException {
+    public Uxy save(@RequestBody UxySaveInDTO in,
+                    @RequestAttribute String currentUserId) throws ClientException, IllegalAccessException {
         String uyId = in.getUyId();
         if (uyId == null || uyId.isEmpty()) {
             throw new ClientException("invalid params");

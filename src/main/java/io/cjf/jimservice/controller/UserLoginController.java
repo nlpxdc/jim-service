@@ -31,9 +31,9 @@ public class UserLoginController {
     private UserService userService;
 
     @PostMapping("/registerByUsername")
-    public UserLoginOutDTO registerByUsername(@RequestBody UserRegisterInDTO userRegisterInDTO) throws ClientException {
-        String username = userRegisterInDTO.getUsername();
-        String loginPassword = userRegisterInDTO.getLoginPassword();
+    public UserLoginOutDTO registerByUsername(@RequestBody UserRegisterInDTO in) throws ClientException {
+        String username = in.getUsername();
+        String loginPassword = in.getLoginPassword();
         if (username == null || username.isEmpty() || username.length() < 6 || !Character.isLetter(username.toCharArray()[0]) ||
                 loginPassword == null || loginPassword.isEmpty() || loginPassword.length() < 6) {
             throw new ClientException("invalid params");
@@ -56,9 +56,9 @@ public class UserLoginController {
     }
 
     @PostMapping("/loginByUsername")
-    public UserLoginOutDTO loginByUsername(@RequestBody User user) throws ClientException {
-        String username = user.getUsername();
-        String loginPassword = user.getLoginPassword();
+    public UserLoginOutDTO loginByUsername(@RequestBody User in) throws ClientException {
+        String username = in.getUsername();
+        String loginPassword = in.getLoginPassword();
         if (username == null || username.isEmpty() || username.length() < 6 || !Character.isLetter(username.toCharArray()[0]) ||
                 loginPassword == null || loginPassword.isEmpty() || loginPassword.length() < 6) {
             throw new ClientException("invalid params");
@@ -67,13 +67,13 @@ public class UserLoginController {
         if (dbUser == null) {
             throw new ClientException("invalid username or password");
         }
-        String dbLoginPassword = user.getLoginPassword();
+        String dbLoginPassword = in.getLoginPassword();
         BCrypt.Result result = verifyer.verify(loginPassword.toCharArray(), dbLoginPassword);
         if (!result.verified) {
             throw new ClientException("invalid username or password");
         }
 
-        UserLoginOutDTO userLoginOutDTO = issue(user);
+        UserLoginOutDTO userLoginOutDTO = issue(in);
 
         return userLoginOutDTO;
     }

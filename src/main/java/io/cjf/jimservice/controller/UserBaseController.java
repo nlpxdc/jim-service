@@ -32,11 +32,11 @@ public class UserBaseController {
     }
 
     @PostMapping("/updateProfile")
-    public UserProfileOutDTO updateProfile(@RequestBody UserProfileInDTO userProfileInDTO,
+    public UserProfileOutDTO updateProfile(@RequestBody UserProfileInDTO in,
                                            @RequestAttribute String currentUserId) throws ClientException, IllegalAccessException {
         User user = new User();
         user.setUserId(currentUserId);
-        BeanUtils.copyProperties(userProfileInDTO, user);
+        BeanUtils.copyProperties(in, user);
         User save = userService.update(user);
         UserProfileOutDTO userProfileOutDTO = new UserProfileOutDTO();
         BeanUtils.copyProperties(save, userProfileOutDTO);
