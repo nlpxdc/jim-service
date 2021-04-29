@@ -9,7 +9,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -93,17 +93,29 @@ public class UxyController {
     }
 
     @PostMapping("/batchGet")
-    public List<Uxy> batchGet(@RequestBody Uxy in) {
-        return null;
-    }
-
-    @PostMapping("/batchGetApplyFriend")
-    public List<Uxy> batchGetApplyFriend(@RequestAttribute String currentUserId) {
-        List<Uxy> xs = uxyService.batchGetByUx(currentUserId);
-        List<Uxy> ys = uxyService.batchGetByUy(currentUserId);
-        List<Uxy> xys = Stream.of(xs, ys).flatMap(Collection::stream).collect(Collectors.toList());
-        List<Uxy> applyFriends = xys.stream().filter(Uxy::getApplyFriend).collect(Collectors.toList());
-        return applyFriends;
+    public List<Uxy> batchGet(@RequestBody Uxy in,
+                              @RequestAttribute String currentUserId) {
+        List<Uxy> uxys = new LinkedList<>();
+        String uxId = in.getUxId();
+        if (currentUserId.equals(uxId)) {
+            List<Uxy> uxs = uxyService.batchGetByUx(uxId);
+            boolean b = uxys.addAll(uxs);
+        }
+        String uyId = in.getUyId();
+        if (currentUserId.equals(uyId)) {
+            List<Uxy> uys = uxyService.batchGetByUy(uyId);
+            boolean b = uxys.addAll(uys);
+        }
+//        List<Uxy> uxys = Stream.of(uxs, uys).flatMap(Collection::stream).collect(Collectors.toList());
+        Stream<Uxy> stream = uxys.stream();
+        if (in.getApplyFriend() != null && in.getApplyFriend()) {
+            stream = stream.filter(Uxy::getApplyFriend);
+        }
+        if (in.getBeFriend() != null && in.getBeFriend()) {
+            stream = stream.filter(Uxy::getBeFriend);
+        }
+        List<Uxy> list = stream.collect(Collectors.toList());
+        return list;
     }
 
 }
