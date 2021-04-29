@@ -1,6 +1,5 @@
 package io.cjf.jimservice.controller;
 
-import io.cjf.jimservice.dto.in.UxyIdsInDTO;
 import io.cjf.jimservice.exception.ClientException;
 import io.cjf.jimservice.po.Uxy;
 import io.cjf.jimservice.service.UxyService;
@@ -59,10 +58,10 @@ public class UxyController {
         return uxys;
     }
 
-    @PostMapping("/update")
-    public Uxy update(@RequestBody Uxy uxy,
-                       @RequestAttribute String currentUserId) throws ClientException, IllegalAccessException {
-        String uyId = uxy.getUyId();
+    @PostMapping("/save")
+    public Uxy save(@RequestBody Uxy in,
+                      @RequestAttribute String currentUserId) throws ClientException, IllegalAccessException {
+        String uyId = in.getUyId();
         if (uyId == null || uyId.isEmpty()) {
             throw new ClientException("invalid params");
         }
@@ -71,24 +70,24 @@ public class UxyController {
         }
 
         String uxyId = String.format("%sV%s", currentUserId, uyId);
-        Uxy dbUxy = uxyService.load(uxyId);
-        if (dbUxy == null) {
-            dbUxy = new Uxy();
-            dbUxy.setUxyId(uxyId);
-            dbUxy.setUxId(currentUserId);
-            dbUxy.setUyId(uyId);
+        Uxy uxy = uxyService.load(uxyId);
+        if (uxy == null) {
+            uxy = new Uxy();
+            uxy.setUxyId(uxyId);
+            uxy.setUxId(currentUserId);
+            uxy.setUyId(uyId);
         }
-        String[] nulls = BeanUtil.getNulls(uxy);
-        BeanUtils.copyProperties(uxy, dbUxy, nulls);
+        String[] nulls = BeanUtil.getNulls(in);
+        BeanUtils.copyProperties(in, uxy, nulls);
 
         long now = System.currentTimeMillis();
-        if (uxy.getApplyFriend() != null && uxy.getApplyFriend()) {
-            dbUxy.setApplyFriendTime(now);
+        if (in.getApplyFriend() != null && in.getApplyFriend()) {
+            uxy.setApplyFriendTime(now);
         }
-        if (uxy.getBeFriend() != null && uxy.getBeFriend()) {
-            dbUxy.setBeFriendTime(now);
+        if (in.getBeFriend() != null && in.getBeFriend()) {
+            uxy.setBeFriendTime(now);
         }
-        Uxy save = uxyService.save(dbUxy);
+        Uxy save = uxyService.save(uxy);
         return save;
     }
 
