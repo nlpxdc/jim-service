@@ -92,6 +92,11 @@ public class UxyController {
         return save;
     }
 
+    @PostMapping("/batchGet")
+    public List<Uxy> batchGet(@RequestBody Uxy in) {
+        return null;
+    }
+
     @PostMapping("/batchGetApplyFriend")
     public List<Uxy> batchGetApplyFriend(@RequestAttribute String currentUserId) {
         List<Uxy> xs = uxyService.batchGetByUx(currentUserId);
