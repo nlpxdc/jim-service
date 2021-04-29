@@ -34,7 +34,7 @@ public class UserBaseController {
 
     @PostMapping("/updateProfile")
     public UserProfileOutDTO updateProfile(@RequestBody UserProfileInDTO userProfileInDTO,
-                              @RequestAttribute String currentUserId) throws ClientException, IllegalAccessException {
+                                           @RequestAttribute String currentUserId) throws ClientException, IllegalAccessException {
         User user = new User();
         user.setUserId(currentUserId);
         BeanUtils.copyProperties(userProfileInDTO, user);
@@ -45,17 +45,17 @@ public class UserBaseController {
     }
 
     @PostMapping("/load")
-    public UserShowOutDTO load(@RequestBody User user) throws ClientException {
-        String userId = user.getUserId();
+    public UserShowOutDTO load(@RequestBody User in) throws ClientException {
+        String userId = in.getUserId();
         if (userId == null) {
             throw new ClientException("invalid params");
         }
-        User dbUser = userService.load(userId);
-        if (dbUser == null) {
-            throw new ClientException("no db user");
+        User user = userService.load(userId);
+        if (user == null) {
+            throw new ClientException("no user id");
         }
         UserShowOutDTO userShowOutDTO = new UserShowOutDTO();
-        BeanUtils.copyProperties(dbUser, userShowOutDTO);
+        BeanUtils.copyProperties(user, userShowOutDTO);
         return userShowOutDTO;
     }
 
@@ -87,16 +87,16 @@ public class UserBaseController {
     }
 
     @PostMapping("/getByUsername")
-    public UserShowOutDTO getByUsername(@RequestBody User user) {
-        String username = user.getUsername();
+    public UserShowOutDTO getByUsername(@RequestBody User in) {
+        String username = in.getUsername();
         if (username == null || username.isEmpty() || username.length() < 6) {
             return null;
         }
-        User dbUser = userService.getByUsername(username);
+        User user = userService.getByUsername(username);
         UserShowOutDTO userShowOutDTO = null;
-        if (dbUser != null) {
+        if (user != null) {
             userShowOutDTO = new UserShowOutDTO();
-            BeanUtils.copyProperties(dbUser, userShowOutDTO);
+            BeanUtils.copyProperties(user, userShowOutDTO);
         }
         return userShowOutDTO;
     }
