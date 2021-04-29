@@ -26,9 +26,9 @@ public class UserBaseController {
         if (user == null) {
             throw new ClientException("no user");
         }
-        UserProfileOutDTO userProfileOutDTO = new UserProfileOutDTO();
-        BeanUtils.copyProperties(user, userProfileOutDTO);
-        return userProfileOutDTO;
+        UserProfileOutDTO out = new UserProfileOutDTO();
+        BeanUtils.copyProperties(user, out);
+        return out;
     }
 
     @PostMapping("/updateProfile")
@@ -38,9 +38,9 @@ public class UserBaseController {
         user.setUserId(currentUserId);
         BeanUtils.copyProperties(in, user);
         User save = userService.update(user);
-        UserProfileOutDTO userProfileOutDTO = new UserProfileOutDTO();
-        BeanUtils.copyProperties(save, userProfileOutDTO);
-        return userProfileOutDTO;
+        UserProfileOutDTO out = new UserProfileOutDTO();
+        BeanUtils.copyProperties(save, out);
+        return out;
     }
 
     @PostMapping("/load")
@@ -53,9 +53,9 @@ public class UserBaseController {
         if (user == null) {
             throw new ClientException("no user id");
         }
-        UserShowOutDTO userShowOutDTO = new UserShowOutDTO();
-        BeanUtils.copyProperties(user, userShowOutDTO);
-        return userShowOutDTO;
+        UserShowOutDTO out = new UserShowOutDTO();
+        BeanUtils.copyProperties(user, out);
+        return out;
     }
 
     @PostMapping("/batchLoad")
@@ -74,15 +74,15 @@ public class UserBaseController {
             throw new ClientException("contains same userIds");
         }
         List<User> users = userService.batchLoad(userIds);
-        List<UserShowOutDTO> userShowOutDTOS = users.stream().map(user -> {
-            UserShowOutDTO userShowOutDTO = null;
+        List<UserShowOutDTO> outs = users.stream().map(user -> {
+            UserShowOutDTO out = null;
             if (user != null) {
-                userShowOutDTO = new UserShowOutDTO();
-                BeanUtils.copyProperties(user, userShowOutDTO);
+                out = new UserShowOutDTO();
+                BeanUtils.copyProperties(user, out);
             }
-            return userShowOutDTO;
+            return out;
         }).collect(Collectors.toList());
-        return userShowOutDTOS;
+        return outs;
     }
 
     @PostMapping("/getByUsername")
@@ -92,12 +92,12 @@ public class UserBaseController {
             return null;
         }
         User user = userService.getByUsername(username);
-        UserShowOutDTO userShowOutDTO = null;
+        UserShowOutDTO out = null;
         if (user != null) {
-            userShowOutDTO = new UserShowOutDTO();
-            BeanUtils.copyProperties(user, userShowOutDTO);
+            out = new UserShowOutDTO();
+            BeanUtils.copyProperties(user, out);
         }
-        return userShowOutDTO;
+        return out;
     }
 
 }
