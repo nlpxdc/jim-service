@@ -1,22 +1,12 @@
 package io.cjf.jimservice.dto.in;
 
 public class UxySaveInDTO {
-
-    private String uxId;
     private String uyId;
 
     private Boolean applyFriend;
     private Boolean beFriend;
     private String remarkName;
     private String showName;
-
-    public String getUxId() {
-        return uxId;
-    }
-
-    public void setUxId(String uxId) {
-        this.uxId = uxId;
-    }
 
     public String getUyId() {
         return uyId;
