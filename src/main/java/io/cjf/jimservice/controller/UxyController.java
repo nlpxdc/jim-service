@@ -69,6 +69,10 @@ public class UxyController {
         if (uyId.equals(currentUserId)) {
             throw new ClientException("same xy");
         }
+        String[] nulls = BeanUtil.getNulls(in);
+        if (nulls.length == in.getClass().getDeclaredFields().length - 1) {
+            throw new ClientException("non update field");
+        }
 
         String uxyId = String.format("%sV%s", currentUserId, uyId);
         Uxy uxy = uxyService.load(uxyId);
@@ -78,7 +82,7 @@ public class UxyController {
             uxy.setUxId(currentUserId);
             uxy.setUyId(uyId);
         }
-        String[] nulls = BeanUtil.getNulls(in);
+
         BeanUtils.copyProperties(in, uxy, nulls);
 
         long now = System.currentTimeMillis();
