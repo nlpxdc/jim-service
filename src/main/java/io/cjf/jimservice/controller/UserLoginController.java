@@ -63,11 +63,11 @@ public class UserLoginController {
                 loginPassword == null || loginPassword.isEmpty() || loginPassword.length() < 6) {
             throw new ClientException("invalid params");
         }
-        User dbUser = userService.getByUsername(username);
-        if (dbUser == null) {
+        User user = userService.getByUsername(username);
+        if (user == null) {
             throw new ClientException("invalid username or password");
         }
-        String dbLoginPassword = in.getLoginPassword();
+        String dbLoginPassword = user.getLoginPassword();
         BCrypt.Result result = verifyer.verify(loginPassword.toCharArray(), dbLoginPassword);
         if (!result.verified) {
             throw new ClientException("invalid username or password");
