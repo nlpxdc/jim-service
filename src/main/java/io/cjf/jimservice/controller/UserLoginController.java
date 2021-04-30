@@ -73,7 +73,7 @@ public class UserLoginController {
             throw new ClientException("invalid username or password");
         }
 
-        UserLoginOutDTO userLoginOutDTO = issue(in);
+        UserLoginOutDTO userLoginOutDTO = issue(user);
 
         return userLoginOutDTO;
     }
