@@ -5,6 +5,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
 import io.cjf.jimservice.constant.GlobalConstant;
 import io.cjf.jimservice.dto.in.UserRegisterInDTO;
+import io.cjf.jimservice.dto.in.UsernameInDTO;
 import io.cjf.jimservice.dto.out.UserLoginOutDTO;
 import io.cjf.jimservice.exception.ClientException;
 import io.cjf.jimservice.po.User;
@@ -56,9 +57,9 @@ public class UserLoginController {
     }
 
     @PostMapping("/loginByUsername")
-    public UserLoginOutDTO loginByUsername(@RequestBody User in) throws ClientException {
-        String username = in.getUsername();
-        String loginPassword = in.getLoginPassword();
+    public UserLoginOutDTO loginByUsername(@RequestBody UsernameInDTO usernameInDTO) throws ClientException {
+        String username = usernameInDTO.getUsername();
+        String loginPassword = usernameInDTO.getLoginPassword();
         if (username == null || username.isEmpty() || username.length() < 6 || !Character.isLetter(username.toCharArray()[0]) ||
                 loginPassword == null || loginPassword.isEmpty() || loginPassword.length() < 6) {
             throw new ClientException("invalid params");

@@ -1,6 +1,9 @@
 package io.cjf.jimservice.controller;
 
+import io.cjf.jimservice.dto.in.UserIdIndTO;
+import io.cjf.jimservice.dto.in.UserIdsInDTO;
 import io.cjf.jimservice.dto.in.UserProfileInDTO;
+import io.cjf.jimservice.dto.in.UsernameInDTO;
 import io.cjf.jimservice.dto.out.UserProfileOutDTO;
 import io.cjf.jimservice.dto.out.UserShowOutDTO;
 import io.cjf.jimservice.exception.ClientException;
@@ -26,17 +29,17 @@ public class UserBaseController {
         if (user == null) {
             throw new ClientException("no user");
         }
-        UserProfileOutDTO out = new UserProfileOutDTO();
-        BeanUtils.copyProperties(user, out);
-        return out;
+        UserProfileOutDTO userProfileOutDTO = new UserProfileOutDTO();
+        BeanUtils.copyProperties(user, userProfileOutDTO);
+        return userProfileOutDTO;
     }
 
     @PostMapping("/updateProfile")
-    public UserProfileOutDTO updateProfile(@RequestBody UserProfileInDTO in,
+    public UserProfileOutDTO updateProfile(@RequestBody UserProfileInDTO userProfileInDTO,
                                            @RequestAttribute String currentUserId) throws ClientException, IllegalAccessException {
         User user = new User();
         user.setUserId(currentUserId);
-        BeanUtils.copyProperties(in, user);
+        BeanUtils.copyProperties(userProfileInDTO, user);
         User save = userService.update(user);
         UserProfileOutDTO out = new UserProfileOutDTO();
         BeanUtils.copyProperties(save, out);
@@ -44,8 +47,8 @@ public class UserBaseController {
     }
 
     @PostMapping("/load")
-    public UserShowOutDTO load(@RequestBody User in) throws ClientException {
-        String userId = in.getUserId();
+    public UserShowOutDTO load(@RequestBody UserIdIndTO userIdIndTO) throws ClientException {
+        String userId = userIdIndTO.getUserId();
         if (userId == null) {
             throw new ClientException("invalid params");
         }
@@ -53,14 +56,14 @@ public class UserBaseController {
         if (user == null) {
             throw new ClientException("no user id");
         }
-        UserShowOutDTO out = new UserShowOutDTO();
-        BeanUtils.copyProperties(user, out);
-        return out;
+        UserShowOutDTO userShowOutDTO = new UserShowOutDTO();
+        BeanUtils.copyProperties(user, userShowOutDTO);
+        return userShowOutDTO;
     }
 
     @PostMapping("/batchLoad")
-    public List<UserShowOutDTO> batchLoad(@RequestBody List<User> ins) throws ClientException {
-        List<String> userIds = ins.stream().map(User::getUserId).collect(Collectors.toList());
+    public List<UserShowOutDTO> batchLoad(@RequestBody UserIdsInDTO userIdsInDTO) throws ClientException {
+        List<String> userIds = userIdsInDTO.getUserIds();
         if (userIds.isEmpty() || userIds.size() > 1000) {
             throw new ClientException("invalid params");
         }
@@ -86,18 +89,18 @@ public class UserBaseController {
     }
 
     @PostMapping("/getByUsername")
-    public UserShowOutDTO getByUsername(@RequestBody User in) {
-        String username = in.getUsername();
+    public UserShowOutDTO getByUsername(@RequestBody UsernameInDTO usernameInDTO) {
+        String username = usernameInDTO.getUsername();
         if (username == null || username.isEmpty() || username.length() < 6) {
             return null;
         }
         User user = userService.getByUsername(username);
-        UserShowOutDTO out = null;
+        UserShowOutDTO userShowOutDTO = null;
         if (user != null) {
-            out = new UserShowOutDTO();
-            BeanUtils.copyProperties(user, out);
+            userShowOutDTO = new UserShowOutDTO();
+            BeanUtils.copyProperties(user, userShowOutDTO);
         }
-        return out;
+        return userShowOutDTO;
     }
 
 }
