@@ -31,7 +31,7 @@ public class UxyController {
         if (uyId == null || uyId.isEmpty()) {
             throw new ClientException("invalid params");
         }
-        if (!uyId.equals(currentUserId)) {
+        if (uyId.equals(currentUserId)) {
             throw new ClientException("same");
         }
         String uxyId = String.format("%sV%s", currentUserId, uyId);
@@ -51,7 +51,7 @@ public class UxyController {
         if (uxId == null || uxId.isEmpty()) {
             throw new ClientException("invalid params");
         }
-        if (!uxId.equals(currentUserId)) {
+        if (uxId.equals(currentUserId)) {
             throw new ClientException("same");
         }
         String uxyId = String.format("%sV%s", uxId, currentUserId);
