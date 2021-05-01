@@ -2,20 +2,24 @@ package io.cjf.jimservice.controller;
 
 import io.cjf.jimservice.dto.in.UxIdIndTO;
 import io.cjf.jimservice.dto.in.UyIdInDTO;
+import io.cjf.jimservice.dto.out.UserShowOutDTO;
+import io.cjf.jimservice.dto.out.UxyNewFriendOutDTO;
 import io.cjf.jimservice.dto.out.UxyShowOutDTO;
 import io.cjf.jimservice.exception.ClientException;
+import io.cjf.jimservice.po.User;
 import io.cjf.jimservice.po.Uxy;
+import io.cjf.jimservice.service.UserService;
 import io.cjf.jimservice.service.UxyService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/uxy")
@@ -23,6 +27,9 @@ public class UxyController {
 
     @Autowired
     private UxyService uxyService;
+
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/loadAsUxByUy")
     public UxyShowOutDTO loadAsUxByUy(@RequestBody UyIdInDTO uyIdInDTO,
@@ -97,21 +104,28 @@ public class UxyController {
     }
 
     @PostMapping("/batchGetNewFriend")
-    public List<UxyShowOutDTO> batchGetNewFriend(@RequestAttribute String currentUserId) {
-        List<Uxy> xs = uxyService.batchGetByUx(currentUserId);
-        List<Uxy> ys = uxyService.batchGetByUy(currentUserId);
-        List<Uxy> xys = Stream.of(xs, ys).flatMap(Collection::stream).collect(Collectors.toList());
-        List<Uxy> newFriends = xys.stream()
+    public List<UxyNewFriendOutDTO> batchGetNewFriend(@RequestAttribute String currentUserId) {
+        List<Uxy> asys = uxyService.batchGetByUy(currentUserId);
+        List<Uxy> newFriends = asys.stream()
                 .filter(uxy -> uxy.getApplyFriend() != null && uxy.getApplyFriend())
                 .sorted(Comparator.comparingLong(Uxy::getApplyFriendTime))
                 .collect(Collectors.toList());
         Collections.reverse(newFriends);
-        List<UxyShowOutDTO> uxyShowOutDTOS = newFriends.stream().map(uxy -> {
-            UxyShowOutDTO uxyShowOutDTO = new UxyShowOutDTO();
-            BeanUtils.copyProperties(uxy, uxyShowOutDTO);
-            return uxyShowOutDTO;
+
+        List<String> uxIds = newFriends.stream().map(Uxy::getUxId).collect(Collectors.toList());
+        List<User> uxs = userService.batchLoad(uxIds);
+        Map<String, User> userMap = uxs.stream().collect(Collectors.toMap(User::getUserId, user -> user));
+
+        List<UxyNewFriendOutDTO> uxyNewFriendOutDTOS = newFriends.stream().map(uxy -> {
+            UxyNewFriendOutDTO uxyNewFriendOutDTO = new UxyNewFriendOutDTO();
+            BeanUtils.copyProperties(uxy, uxyNewFriendOutDTO);
+            User ux = userMap.get(uxy.getUxId());
+            UserShowOutDTO uxShowOutDTO = new UserShowOutDTO();
+            BeanUtils.copyProperties(ux, uxShowOutDTO);
+            uxyNewFriendOutDTO.setUx(uxShowOutDTO);
+            return uxyNewFriendOutDTO;
         }).collect(Collectors.toList());
-        return uxyShowOutDTOS;
+        return uxyNewFriendOutDTOS;
     }
 
 }
