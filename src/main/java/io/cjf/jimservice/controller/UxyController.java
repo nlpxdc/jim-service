@@ -4,7 +4,6 @@ import io.cjf.jimservice.dto.in.UserIdIndTO;
 import io.cjf.jimservice.dto.in.UxIdIndTO;
 import io.cjf.jimservice.dto.in.UyIdInDTO;
 import io.cjf.jimservice.dto.out.UserShowOutDTO;
-import io.cjf.jimservice.dto.out.UxyNewFriendOutDTO;
 import io.cjf.jimservice.dto.out.UxyShowOutDTO;
 import io.cjf.jimservice.exception.ClientException;
 import io.cjf.jimservice.po.User;
@@ -101,7 +100,7 @@ public class UxyController {
     }
 
     @PostMapping("/batchGetNewFriend")
-    public List<UxyNewFriendOutDTO> batchGetNewFriend(@RequestAttribute String currentUserId) {
+    public List<UxyShowOutDTO> batchGetNewFriend(@RequestAttribute String currentUserId) {
         List<Uxy> asys = uxyService.batchGetByUy(currentUserId);
         List<Uxy> newFriends = asys.stream()
                 .filter(uxy -> uxy.getApplyFriend() != null && uxy.getApplyFriend())
@@ -109,20 +108,13 @@ public class UxyController {
                 .collect(Collectors.toList());
         Collections.reverse(newFriends);
 
-        List<String> uxIds = newFriends.stream().map(Uxy::getUxId).collect(Collectors.toList());
-        List<User> uxs = userService.batchLoad(uxIds);
-        Map<String, User> userMap = uxs.stream().collect(Collectors.toMap(User::getUserId, user -> user));
 
-        List<UxyNewFriendOutDTO> uxyNewFriendOutDTOS = newFriends.stream().map(uxy -> {
-            UxyNewFriendOutDTO uxyNewFriendOutDTO = new UxyNewFriendOutDTO();
-            BeanUtils.copyProperties(uxy, uxyNewFriendOutDTO);
-            User ux = userMap.get(uxy.getUxId());
-            UserShowOutDTO uxShowOutDTO = new UserShowOutDTO();
-            BeanUtils.copyProperties(ux, uxShowOutDTO);
-            uxyNewFriendOutDTO.setUx(uxShowOutDTO);
-            return uxyNewFriendOutDTO;
+        List<UxyShowOutDTO> uxyShowOutDTOS = newFriends.stream().map(uxy -> {
+            UxyShowOutDTO uxyShowOutDTO = new UxyShowOutDTO();
+            BeanUtils.copyProperties(uxy, uxyShowOutDTO);
+            return uxyShowOutDTO;
         }).collect(Collectors.toList());
-        return uxyNewFriendOutDTOS;
+        return uxyShowOutDTOS;
     }
 
     @PostMapping("/agreeFriend")
