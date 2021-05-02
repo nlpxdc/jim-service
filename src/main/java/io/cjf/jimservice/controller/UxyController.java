@@ -127,4 +127,9 @@ public class UxyController {
         return uxyNewFriendOutDTOS;
     }
 
+    @PostMapping("/agreeFriend")
+    public void agreeFriend(@RequestBody UxIdIndTO uxIdIndTO) {
+        
+    }
+
 }
