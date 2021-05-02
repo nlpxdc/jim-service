@@ -12,6 +12,8 @@ public interface UxyService {
 
     List<Uxy> batchLoad(List<String> uxyIds);
 
+    void batchSave(Iterable<Uxy> uxys);
+
     List<Uxy> batchGetByUx(String uxId);
 
     List<Uxy> batchGetByUy(String uyId);

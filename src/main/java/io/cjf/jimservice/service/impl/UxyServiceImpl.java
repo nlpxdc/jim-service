@@ -48,6 +48,11 @@ public class UxyServiceImpl implements UxyService {
     }
 
     @Override
+    public void batchSave(Iterable<Uxy> uxys) {
+        List<Uxy> saves = uxyRepository.saveAll(uxys);
+    }
+
+    @Override
     public List<Uxy> batchGetByUx(String uxId) {
         List<Uxy> uxys = uxyRepository.findAllByUxId(uxId);
         return uxys;

@@ -1,5 +1,6 @@
 package io.cjf.jimservice.controller;
 
+import io.cjf.jimservice.dto.in.UserIdIndTO;
 import io.cjf.jimservice.dto.in.UxIdIndTO;
 import io.cjf.jimservice.dto.in.UyIdInDTO;
 import io.cjf.jimservice.dto.out.UserShowOutDTO;
@@ -14,10 +15,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -128,8 +126,41 @@ public class UxyController {
     }
 
     @PostMapping("/agreeFriend")
-    public void agreeFriend(@RequestBody UxIdIndTO uxIdIndTO) {
-        
+    public void agreeFriend(@RequestBody UserIdIndTO userIdIndTO,
+                            @RequestAttribute String currentUserId) throws ClientException {
+        String userId = userIdIndTO.getUserId();
+        if (userId == null || userId.isEmpty()) {
+            throw new ClientException("invalid params");
+        }
+
+        long now = System.currentTimeMillis();
+
+        Set<Uxy> pair = new HashSet<>();
+
+        String uvcId = String.format("%sV%s", userId, currentUserId);
+        Uxy uvc = uxyService.load(uvcId);
+        if (uvc == null || uvc.getApplyFriend() == null || !uvc.getApplyFriend()) {
+            throw new ClientException("non uvc apply friend");
+        }
+        uvc.setBeFriend(true);
+        uvc.setBeFriendTime(now);
+        boolean add = pair.add(uvc);
+
+        String cvuId = String.format("%sV%s", currentUserId, userId);
+        Uxy cvu = uxyService.load(cvuId);
+        if (cvu == null) {
+            cvu = new Uxy();
+            cvu.setUxyId(cvuId);
+            cvu.setUxId(currentUserId);
+            cvu.setUyId(userId);
+        }
+        cvu.setBeFriend(true);
+        cvu.setBeFriendTime(now);
+        boolean add1 = pair.add(cvu);
+
+        uxyService.batchSave(pair);
+
+
     }
 
 }
