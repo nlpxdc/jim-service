@@ -157,8 +157,11 @@ public class UxyController {
         boolean add1 = pair.add(cvu);
 
         uxyService.batchSave(pair);
+    }
 
-
+    @PostMapping("/batchGetFriend")
+    public List<UxyShowOutDTO> batchGetFriend(@RequestAttribute String currentUserId) {
+        return null;
     }
 
 }
