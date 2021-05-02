@@ -160,8 +160,18 @@ public class UxyController {
     }
 
     @PostMapping("/batchGetFriend")
-    public List<UxyShowOutDTO> batchGetFriend(@RequestAttribute String currentUserId) {
-        return null;
+    public Set<UxyShowOutDTO> batchGetFriend(@RequestAttribute String currentUserId) {
+        List<Uxy> asxs = uxyService.batchGetByUx(currentUserId);
+        Set<Uxy> friends = asxs.stream()
+                .filter(uxy -> uxy.getBeFriend() != null && uxy.getBeFriend())
+                .collect(Collectors.toSet());
+
+        Set<UxyShowOutDTO> uxyShowOutDTOS = friends.stream().map(uxy -> {
+            UxyShowOutDTO uxyShowOutDTO = new UxyShowOutDTO();
+            BeanUtils.copyProperties(uxy, uxyShowOutDTO);
+            return uxyShowOutDTO;
+        }).collect(Collectors.toSet());
+        return uxyShowOutDTOS;
     }
 
 }
