@@ -142,6 +142,9 @@ public class UxyController {
         if (uvc == null || uvc.getApplyFriend() == null || !uvc.getApplyFriend()) {
             throw new ClientException("non uvc apply friend");
         }
+        if (uvc.getBeFriend() != null && uvc.getBeFriend()) {
+            throw new ClientException("already friend");
+        }
         uvc.setBeFriend(true);
         uvc.setBeFriendTime(now);
         boolean add = pair.add(uvc);
@@ -153,6 +156,9 @@ public class UxyController {
             cvu.setUxyId(cvuId);
             cvu.setUxId(currentUserId);
             cvu.setUyId(userId);
+        }
+        if (cvu.getBeFriend() != null && cvu.getBeFriend()) {
+            throw new ClientException("already friend");
         }
         cvu.setBeFriend(true);
         cvu.setBeFriendTime(now);
