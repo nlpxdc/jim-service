@@ -7,9 +7,10 @@ import io.cjf.jimservice.dto.out.UxyShowOutDTO;
 import io.cjf.jimservice.enumeration.ConversationType;
 import io.cjf.jimservice.exception.ClientException;
 import io.cjf.jimservice.po.Conversation;
+import io.cjf.jimservice.po.UserConversation;
 import io.cjf.jimservice.po.Uxy;
 import io.cjf.jimservice.service.ConversationService;
-import io.cjf.jimservice.service.UserService;
+import io.cjf.jimservice.service.UserConversationService;
 import io.cjf.jimservice.service.UxyService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ public class UxyController {
 
     @Autowired
     private ConversationService conversationService;
+
+    @Autowired
+    private UserConversationService userConversationService;
 
     @PostMapping("/loadAsUxByUy")
     public UxyShowOutDTO loadAsUxByUy(@RequestBody UyIdInDTO uyIdInDTO,
@@ -160,13 +164,29 @@ public class UxyController {
         uxyService.batchSave(pair);
 
         Conversation conversation = new Conversation();
-        String uuid = UUID.randomUUID().toString().replace("-", "");
-        conversation.setConversationId(uuid);
+        String conversationId = UUID.randomUUID().toString().replace("-", "");
+        conversation.setConversationId(conversationId);
         conversation.setType(ConversationType.Single.ordinal());
         conversation.setCreateTime(now);
         conversationService.save(conversation);
 
+        Set<UserConversation> conPair = new HashSet<>();
 
+        UserConversation xCon = new UserConversation();
+        xCon.setUserConversationId(String.format("%sV%s", currentUserId, conversationId));
+        xCon.setUserId(currentUserId);
+        xCon.setConversationId(conversationId);
+        xCon.setJoinTime(now);
+        conPair.add(xCon);
+
+        UserConversation yCon = new UserConversation();
+        yCon.setUserConversationId(String.format("%sV%s", userId, conversationId));
+        yCon.setUserId(userId);
+        yCon.setConversationId(conversationId);
+        yCon.setJoinTime(now);
+        conPair.add(yCon);
+
+        userConversationService.batchSave(conPair);
 
     }
 
