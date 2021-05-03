@@ -3,11 +3,12 @@ package io.cjf.jimservice.controller;
 import io.cjf.jimservice.dto.in.UserIdIndTO;
 import io.cjf.jimservice.dto.in.UxIdIndTO;
 import io.cjf.jimservice.dto.in.UyIdInDTO;
-import io.cjf.jimservice.dto.out.UserShowOutDTO;
 import io.cjf.jimservice.dto.out.UxyShowOutDTO;
+import io.cjf.jimservice.enumeration.ConversationType;
 import io.cjf.jimservice.exception.ClientException;
-import io.cjf.jimservice.po.User;
+import io.cjf.jimservice.po.Conversation;
 import io.cjf.jimservice.po.Uxy;
+import io.cjf.jimservice.service.ConversationService;
 import io.cjf.jimservice.service.UserService;
 import io.cjf.jimservice.service.UxyService;
 import org.springframework.beans.BeanUtils;
@@ -25,7 +26,7 @@ public class UxyController {
     private UxyService uxyService;
 
     @Autowired
-    private UserService userService;
+    private ConversationService conversationService;
 
     @PostMapping("/loadAsUxByUy")
     public UxyShowOutDTO loadAsUxByUy(@RequestBody UyIdInDTO uyIdInDTO,
@@ -157,6 +158,16 @@ public class UxyController {
         boolean add1 = pair.add(cvu);
 
         uxyService.batchSave(pair);
+
+        Conversation conversation = new Conversation();
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        conversation.setConversationId(uuid);
+        conversation.setType(ConversationType.Single.ordinal());
+        conversation.setCreateTime(now);
+        conversationService.save(conversation);
+
+
+
     }
 
     @PostMapping("/batchGetFriend")
